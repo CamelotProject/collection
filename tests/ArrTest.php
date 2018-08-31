@@ -1,19 +1,28 @@
 <?php
 
-namespace Bolt\Collection\Tests;
+/*
+ * This file is part of a Camelot Project package.
+ *
+ * (c) The Camelot Project
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ */
 
-use Bolt\Collection\Arr;
-use Bolt\Collection\Bag;
-use Bolt\Collection\MutableBag;
-use Bolt\Collection\Tests\Fixtures\TestArrayLike;
-use Bolt\Collection\Tests\Fixtures\TestBadDefinitionArrayLike;
-use Bolt\Collection\Tests\Fixtures\TestBadLogicArrayLike;
-use Bolt\Collection\Tests\Fixtures\TestBadReferenceExpressionArrayLike;
-use Bolt\Collection\Tests\Fixtures\TestColumn;
+namespace Camelot\Collection\Tests;
+
+use Camelot\Collection\Arr;
+use Camelot\Collection\Bag;
+use Camelot\Collection\MutableBag;
+use Camelot\Collection\Tests\Fixtures\TestArrayLike;
+use Camelot\Collection\Tests\Fixtures\TestBadDefinitionArrayLike;
+use Camelot\Collection\Tests\Fixtures\TestBadLogicArrayLike;
+use Camelot\Collection\Tests\Fixtures\TestBadReferenceExpressionArrayLike;
+use Camelot\Collection\Tests\Fixtures\TestColumn;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for \Bolt\Collection\Arr.
+ * Tests for \Camelot\Collection\Arr.
  *
  * @author Carson Full <carsonfull@gmail.com>
  */

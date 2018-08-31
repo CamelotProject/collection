@@ -1,11 +1,20 @@
 <?php
 
-namespace Bolt\Collection;
+/*
+ * This file is part of a Camelot Project package.
+ *
+ * (c) The Camelot Project
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ */
+
+namespace Camelot\Collection;
 
 use ArrayAccess;
-use Bolt\Common\Assert;
-use Bolt\Common\Deprecated;
-use Bolt\Common\Thrower;
+use Camelot\Common\Assert;
+use Camelot\Common\Deprecated;
+use Camelot\Common\Thrower;
 use Countable;
 use ErrorException;
 use InvalidArgumentException;
@@ -47,7 +56,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      */
     public static function of()
     {
-        return new static(func_get_args());
+        return new static(\func_get_args());
     }
 
     /**
@@ -96,11 +105,11 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
         $keys = Arr::from($keys);
         $values = Arr::from($values);
 
-        if (count($keys) !== count($values)) {
+        if (\count($keys) !== \count($values)) {
             throw new InvalidArgumentException('The size of keys and values needs to be the same.');
         }
 
-        if (count($keys) === 0) {
+        if (\count($keys) === 0) {
             return new static();
         }
 
@@ -188,7 +197,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      */
     public function hasItem($item)
     {
-        return in_array($item, $this->items, true);
+        return \in_array($item, $this->items, true);
     }
 
     /**
@@ -233,7 +242,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      */
     public function count()
     {
-        return count($this->items);
+        return \count($this->items);
     }
 
     /**
@@ -328,9 +337,9 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      * This uses a strict check so types must much and objects must be the same instance to match.
      *
      * @param mixed $item      The item to search for
-     * @param int   $fromIndex The starting index to search from.
+     * @param int   $fromIndex the starting index to search from.
      *                         Can be negative to start from that far from the end of the array.
-     *                         If index is out of bounds, it will be moved to first/last index.
+     *                         If index is out of bounds, it will be moved to first/last index
      *
      * @return int|string|null The index or key of the item or null if the item was not found
      */
@@ -372,9 +381,9 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      * Returns the first item that matches the `$predicate` or null.
      *
      * @param callable $predicate Function is passed `($value, $key)`
-     * @param int      $fromIndex The starting index to search from.
+     * @param int      $fromIndex the starting index to search from.
      *                            Can be negative to start from that far from the end of the array.
-     *                            If index is out of bounds, it will be moved to first/last index.
+     *                            If index is out of bounds, it will be moved to first/last index
      *
      * @return mixed|null
      */
@@ -389,9 +398,9 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      * Returns the last item that matches the `$predicate` or null.
      *
      * @param callable $predicate Function is passed `($value, $key)`
-     * @param int      $fromIndex The starting index to search from.
+     * @param int      $fromIndex the starting index to search from.
      *                            Can be negative to start from that far from the end of the array.
-     *                            If index is out of bounds, it will be moved to first/last index.
+     *                            If index is out of bounds, it will be moved to first/last index
      *
      * @return mixed|null
      */
@@ -406,9 +415,9 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      * Returns the first key that matches the `$predicate` or null.
      *
      * @param callable $predicate Function is passed `($value, $key)`
-     * @param int      $fromIndex The starting index to search from.
+     * @param int      $fromIndex the starting index to search from.
      *                            Can be negative to start from that far from the end of the array.
-     *                            If index is out of bounds, it will be moved to first/last index.
+     *                            If index is out of bounds, it will be moved to first/last index
      *
      * @return mixed|null
      */
@@ -427,9 +436,9 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      * Returns the last key that matches the `$predicate` or null.
      *
      * @param callable $predicate Function is passed `($value, $key)`
-     * @param int      $fromIndex The starting index to search from.
+     * @param int      $fromIndex the starting index to search from.
      *                            Can be negative to start from that far from the end of the array.
-     *                            If index is out of bounds, it will be moved to first/last index.
+     *                            If index is out of bounds, it will be moved to first/last index
      *
      * @return mixed|null
      */
@@ -447,9 +456,9 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     /**
      * Iterate through the items starting at the given index.
      *
-     * @param int $fromIndex The starting index to search from.
+     * @param int $fromIndex the starting index to search from.
      *                       Can be negative to start from that far from the end of the array.
-     *                       If index is out of bounds, it will be moved to first/last index.
+     *                       If index is out of bounds, it will be moved to first/last index
      *
      * @return \Generator
      */
@@ -457,7 +466,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     {
         Assert::integer($fromIndex);
 
-        $count = count($this->items);
+        $count = \count($this->items);
 
         if ($count === 0) {
             return;
@@ -488,7 +497,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     {
         Assert::nullOrInteger($fromIndex);
 
-        $index = count($this->items);
+        $index = \count($this->items);
 
         if ($index === 0) {
             return;
@@ -570,7 +579,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     public function call(callable $callable, /*...*/$args = null)
     {
         // Optimized for no args. Argument unpacking is still faster once we get to use 5.6 syntax
-        $result = $args ? call_user_func_array($callable, [$this->items] + func_get_args()) : $callable($this->items);
+        $result = $args ? \call_user_func_array($callable, [$this->items] + \func_get_args()) : $callable($this->items);
         // $result = $callable($this->items, ...$args);
 
         return $this->createFrom(Arr::from($result));
@@ -795,18 +804,18 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     /**
      * Returns a bag with a slice of `$length` items starting at position `$offset` extracted from this bag.
      *
-     * @param int      $offset       If positive, the offset to start from.
-     *                               If negative, the bag will start that far from the end of the list.
-     * @param int|null $length       If positive, the maximum number of items to return.
+     * @param int      $offset       if positive, the offset to start from.
+     *                               If negative, the bag will start that far from the end of the list
+     * @param int|null $length       if positive, the maximum number of items to return.
      *                               If negative, the bag will stop that far from the end of the list.
-     *                               If null, the bag will have everything from the $offset to the end of the list.
+     *                               If null, the bag will have everything from the $offset to the end of the list
      * @param bool     $preserveKeys Whether to preserve keys in the resulting bag or not
      *
      * @return static
      */
     public function slice($offset, $length = null, $preserveKeys = false)
     {
-        return $this->createFrom(array_slice($this->items, $offset, $length, $preserveKeys));
+        return $this->createFrom(\array_slice($this->items, $offset, $length, $preserveKeys));
     }
 
     /**
@@ -1077,7 +1086,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     public function pick($keys)
     {
         // Remove accepting array as first argument once destructuring arrays is supported (PHP 5.6)
-        return $this->intersectKeys(array_flip(\is_iterable($keys) ? Arr::from($keys) : func_get_args()));
+        return $this->intersectKeys(array_flip(\is_iterable($keys) ? Arr::from($keys) : \func_get_args()));
     }
 
     /**
@@ -1104,7 +1113,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     public function omit($keys)
     {
         // Remove accepting array as first argument once destructuring arrays is supported (PHP 5.6)
-        return $this->diffKeys(array_flip(\is_iterable($keys) ? Arr::from($keys) : func_get_args()));
+        return $this->diffKeys(array_flip(\is_iterable($keys) ? Arr::from($keys) : \func_get_args()));
     }
 
     /**

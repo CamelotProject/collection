@@ -1,10 +1,19 @@
 <?php
 
-namespace Bolt\Collection\Tests;
+/*
+ * This file is part of a Camelot Project package.
+ *
+ * (c) The Camelot Project
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ */
+
+namespace Camelot\Collection\Tests;
 
 use ArrayObject;
-use Bolt\Collection\Bag;
-use Bolt\Collection\MutableBag;
+use Camelot\Collection\Bag;
+use Camelot\Collection\MutableBag;
 use PHPUnit\Framework\TestCase;
 
 class BagTest extends TestCase
@@ -198,7 +207,7 @@ class BagTest extends TestCase
     {
         $bag = $this->createBag(['foo', 'bar']);
 
-        $this->assertEquals(2, count($bag));
+        $this->assertEquals(2, \count($bag));
     }
 
     public function testEmpty()
@@ -262,7 +271,7 @@ class BagTest extends TestCase
     }
 
     /**
-     * @dataProvider \Bolt\Collection\Tests\ArrTest::provideIsIndexed
+     * @dataProvider \Camelot\Collection\Tests\ArrTest::provideIsIndexed
      *
      * @param array $data
      * @param bool  $isIndexed
@@ -589,7 +598,7 @@ class BagTest extends TestCase
     }
 
     /**
-     * @dataProvider \Bolt\Collection\Tests\ArrTest::provideReplaceRecursive
+     * @dataProvider \Camelot\Collection\Tests\ArrTest::provideReplaceRecursive
      *
      * @param array $array1
      * @param array $array2
@@ -615,7 +624,7 @@ class BagTest extends TestCase
     }
 
     /**
-     * @dataProvider \Bolt\Collection\Tests\ArrTest::provideReplaceRecursive
+     * @dataProvider \Camelot\Collection\Tests\ArrTest::provideReplaceRecursive
      *
      * @param array $array1
      * @param array $array2
@@ -1325,7 +1334,7 @@ class BagTest extends TestCase
 
     public function after20testOffsetGetByReference()
     {
-        if (defined('HHVM_VERSION')) {
+        if (\defined('HHVM_VERSION')) {
             $this->markTestSkipped('HHVM does not trigger indirect modification notice.');
             // we also don't know if it's being asked for by reference to throw an exception.
         }
@@ -1342,12 +1351,12 @@ class BagTest extends TestCase
 
         restore_error_handler();
 
-        $this->assertEquals([[E_NOTICE, 'Indirect modification of overloaded element of Bolt\Collection\Bag has no effect']], $errors->getArrayCopy());
+        $this->assertEquals([[E_NOTICE, 'Indirect modification of overloaded element of Camelot\Collection\Bag has no effect']], $errors->getArrayCopy());
     }
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot modify items on an Bolt\Collection\Bag
+     * @expectedExceptionMessage Cannot modify items on an Camelot\Collection\Bag
      */
     public function after20testOffsetSet()
     {
@@ -1358,7 +1367,7 @@ class BagTest extends TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot remove items from an Bolt\Collection\Bag
+     * @expectedExceptionMessage Cannot remove items from an Camelot\Collection\Bag
      */
     public function after20testOffsetUnset()
     {

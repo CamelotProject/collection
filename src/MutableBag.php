@@ -1,6 +1,15 @@
 <?php
 
-namespace Bolt\Collection;
+/*
+ * This file is part of a Camelot Project package.
+ *
+ * (c) The Camelot Project
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ */
+
+namespace Camelot\Collection;
 
 /**
  * An OO implementation of PHP's array functionality and more.

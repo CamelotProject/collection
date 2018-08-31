@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Collection;
+namespace Camelot\Collection;
 
 // Load Bag.php which defines class alias
 class_exists(Bag::class);

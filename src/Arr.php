@@ -1,11 +1,20 @@
 <?php
 
-namespace Bolt\Collection;
+/*
+ * This file is part of a Camelot Project package.
+ *
+ * (c) The Camelot Project
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ */
+
+namespace Camelot\Collection;
 
 use ArrayAccess;
-use Bolt\Common\Assert;
-use Bolt\Common\Deprecated;
-use Bolt\Common\Thrower;
+use Camelot\Common\Assert;
+use Camelot\Common\Deprecated;
+use Camelot\Common\Thrower;
 use InvalidArgumentException;
 use RuntimeException;
 use Traversable;
@@ -32,7 +41,7 @@ class Arr
      */
     public static function from($iterable)
     {
-        if (is_array($iterable)) {
+        if (\is_array($iterable)) {
             return $iterable;
         }
         // Don't mean to play favorites, but want to optimize where we can.
@@ -116,11 +125,11 @@ class Arr
 
             if ($columnKey === null) {
                 $value = $row;
-            } elseif (is_array($row) && array_key_exists($columnKey, $row)) {
+            } elseif (\is_array($row) && array_key_exists($columnKey, $row)) {
                 $value = $row[$columnKey];
             } elseif ($row instanceof ArrayAccess && isset($row[$columnKey])) {
                 $value = $row[$columnKey];
-            } elseif (is_object($row) && isset($row->{$columnKey})) {
+            } elseif (\is_object($row) && isset($row->{$columnKey})) {
                 $value = $row->{$columnKey};
             } else {
                 continue;
@@ -132,13 +141,13 @@ class Arr
                  * For ArrayAccess we assume devs are smarter and don't have this edge case. Regardless, we don't have
                  * another way to check so it's up to them.
                  */
-                if (is_array($row) && array_key_exists($indexKey, $row)) {
+                if (\is_array($row) && array_key_exists($indexKey, $row)) {
                     $keySet = true;
                     $key = (string) $row[$indexKey];
                 } elseif ($row instanceof ArrayAccess && isset($row[$indexKey])) {
                     $keySet = true;
                     $key = (string) $row[$indexKey];
-                } elseif (is_object($row) && isset($row->{$indexKey})) {
+                } elseif (\is_object($row) && isset($row->{$indexKey})) {
                     $keySet = true;
                     $key = (string) $row->{$indexKey};
                 }
@@ -185,7 +194,7 @@ class Arr
         $path = explode('/', $path);
 
         while (($part = array_shift($path)) !== null) {
-            if (!($data instanceof ArrayAccess) && !is_array($data)) {
+            if (!($data instanceof ArrayAccess) && !\is_array($data)) {
                 return false;
             }
             if (!(isset($data[$part]) || array_key_exists($part, $data))) {
@@ -225,7 +234,7 @@ class Arr
         $path = explode('/', $path);
 
         while (($part = array_shift($path)) !== null) {
-            if ((!is_array($data) && !($data instanceof ArrayAccess)) || !isset($data[$part])) {
+            if ((!\is_array($data) && !($data instanceof ArrayAccess)) || !isset($data[$part])) {
                 return $default;
             }
             $data = $data[$part];
@@ -278,7 +287,7 @@ class Arr
 
         $queue = explode('/', $path);
         // Optimization for simple sets.
-        if (count($queue) === 1) {
+        if (\count($queue) === 1) {
             if ($path === '[]') {
                 $data[] = $value;
             } elseif (static::$unsetMarker && $value === static::$unsetMarker) {
@@ -293,7 +302,7 @@ class Arr
         $invalidKey = null;
         $current = &$data;
         while (($key = array_shift($queue)) !== null) {
-            if (!is_array($current) && !($current instanceof ArrayAccess)) {
+            if (!\is_array($current) && !($current instanceof ArrayAccess)) {
                 throw new RuntimeException(
                     sprintf(
                         "Cannot set '%s', because '%s' is already set and not an array or an object implementing ArrayAccess.",
@@ -329,7 +338,7 @@ class Arr
                         "Cannot set '%s', because '%s' is an %s which does not return arrays by reference from its offsetGet() method. See %s for an example of how to do this.",
                         $path,
                         $invalidKey,
-                        get_class($current),
+                        \get_class($current),
                         MutableBag::class
                     ),
                     0,
@@ -410,7 +419,7 @@ class Arr
      */
     public static function isAccessible($value)
     {
-        return $value instanceof ArrayAccess || is_array($value);
+        return $value instanceof ArrayAccess || \is_array($value);
     }
 
     /**
@@ -420,11 +429,11 @@ class Arr
      *
      * @throws InvalidArgumentException when it is not
      *
-     * @deprecated since 1.0 and will be removed in 2.0. Use {@see \Bolt\Common\Assert::isArrayAccessible} instead.
+     * @deprecated since 1.0 and will be removed in 2.0. Use {@see \Camelot\Common\Assert::isArrayAccessible} instead.
      */
     public static function assertAccessible($value)
     {
-        Deprecated::method(1.0, 'Bolt\Common\Assert::isArrayAccessible');
+        Deprecated::method(1.0, 'Camelot\Common\Assert::isArrayAccessible');
 
         Assert::isArrayAccessible($value);
     }
@@ -443,11 +452,11 @@ class Arr
         if ($iterable instanceof Traversable) {
             $iterable = iterator_to_array($iterable);
         }
-        if (!is_array($iterable) || $iterable === []) {
+        if (!\is_array($iterable) || $iterable === []) {
             return false;
         }
 
-        return array_keys($iterable) !== range(0, count($iterable) - 1);
+        return array_keys($iterable) !== range(0, \count($iterable) - 1);
     }
 
     /**
@@ -547,7 +556,7 @@ class Arr
             if ($value instanceof Traversable) {
                 $value = iterator_to_array($value);
             }
-            if (is_array($value) && static::isAssociative($value)
+            if (\is_array($value) && static::isAssociative($value)
                 && isset($merged[$key]) && \is_iterable($merged[$key])
             ) {
                 $merged[$key] = static::replaceRecursive($merged[$key], $value);
@@ -591,7 +600,7 @@ class Arr
         ];
         static $noErrors = [];
 
-        $class = get_class($obj);
+        $class = \get_class($obj);
 
         /*
          * Check to see if offsetGet() is defined to return reference (with "&" before method name).
@@ -635,7 +644,7 @@ class Arr
         }
 
         // We cannot validate this result because objects are always returned by reference (and scalars do not matter).
-        if (!is_array($value1)) {
+        if (!\is_array($value1)) {
             // return value (via parameter) so set() doesn't have to fetch the item again.
             // We cannot do this if is an array because it will be the value instead of the reference.
             $value = $value1;
