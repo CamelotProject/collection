@@ -16,8 +16,6 @@ use Camelot\Collection\MutableBag;
 
 class MutableBagTest extends BagTest
 {
-    use BagLegacyTrait;
-
     /** @var string|MutableBag */
     protected $cls = MutableBag::class;
 
