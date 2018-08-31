@@ -45,7 +45,7 @@ class Arr
             return $iterable;
         }
         // Don't mean to play favorites, but want to optimize where we can.
-        if ($iterable instanceof ImmutableBag) {
+        if ($iterable instanceof Bag) {
             return $iterable->toArray();
         }
         if ($iterable instanceof Traversable) {
