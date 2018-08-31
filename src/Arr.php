@@ -323,10 +323,6 @@ class Arr
                 return;
             }
 
-            if ($current instanceof Bag && !($current instanceof MutableBag)) {
-                Deprecated::warn('Mutating items in a ' . Bag::class, 1.1, 'Use a ' . MutableBag::class . ' instead.');
-            }
-
             if (!isset($current[$key])) {
                 $current[$key] = [];
             }
@@ -420,22 +416,6 @@ class Arr
     public static function isAccessible($value)
     {
         return $value instanceof ArrayAccess || \is_array($value);
-    }
-
-    /**
-     * Asserts that the given value is an array or an object implementing `ArrayAccess`.
-     *
-     * @param mixed $value
-     *
-     * @throws InvalidArgumentException when it is not
-     *
-     * @deprecated since 1.0 and will be removed in 2.0. Use {@see \Camelot\Common\Assert::isArrayAccessible} instead.
-     */
-    public static function assertAccessible($value)
-    {
-        Deprecated::method(1.0, 'Camelot\Common\Assert::isArrayAccessible');
-
-        Assert::isArrayAccessible($value);
     }
 
     /**
