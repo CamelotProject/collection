@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of a Camelot Project package.
  *
@@ -60,21 +62,20 @@ class ArrTest extends TestCase
      * @param $input
      * @param $expected
      */
-    public function testFrom($input, $expected)
+    public function testFrom($input, $expected): void
     {
         $this->assertSame($expected, Arr::from($input));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Expected an iterable. Got: Exception
-     */
-    public function testFromNonIterable()
+    public function testFromNonIterable(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected an iterable. Got: Exception');
+
         Arr::from(new \Exception());
     }
 
-    public function testFromRecursive()
+    public function testFromRecursive(): void
     {
         $expected = [
             'foo'    => 'bar',
@@ -90,7 +91,7 @@ class ArrTest extends TestCase
         $this->assertSame($expected, Arr::fromRecursive($input));
     }
 
-    public function testColumn()
+    public function testColumn(): void
     {
         $data = new \ArrayIterator([
             new TestColumn('foo', 'bar'),
@@ -121,44 +122,36 @@ class ArrTest extends TestCase
     {
         return [
             'data not accessible' => [new \EmptyIterator(), 'foo'],
-            'path not string'     => [[], false],
-            'empty path'          => [[], ''],
         ];
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider provideGetSetHasInvalidArgs
-     *
-     * @param mixed $data
-     * @param mixed $path
      */
-    public function testHasInvalidArgs($data, $path)
+    public function testHasInvalidArgs($data, $path): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         Arr::has($data, $path);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider provideGetSetHasInvalidArgs
-     *
-     * @param mixed $data
-     * @param mixed $path
      */
-    public function testGetInvalidArgs($data, $path)
+    public function testGetInvalidArgs($data, $path): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         Arr::get($data, $path);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider provideGetSetHasInvalidArgs
-     *
-     * @param mixed $data
-     * @param mixed $path
      */
-    public function testSetInvalidArgs($data, $path)
+    public function testSetInvalidArgs($data, $path): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         Arr::set($data, $path, 'mixed');
     }
 
@@ -228,7 +221,7 @@ class ArrTest extends TestCase
      *
      * @param array|\ArrayAccess $data
      */
-    public function testHas($data)
+    public function testHas($data): void
     {
         $this->assertTrue(Arr::has($data, 'foo'));
         $this->assertTrue(Arr::has($data, 'items'));
@@ -243,7 +236,7 @@ class ArrTest extends TestCase
      *
      * @param array|\ArrayAccess $data
      */
-    public function testGet($data)
+    public function testGet($data): void
     {
         $this->assertEquals('bar', Arr::get($data, 'foo'));
         $this->assertEquals('world', Arr::get($data, 'items/nested/hello'));
@@ -258,7 +251,7 @@ class ArrTest extends TestCase
      *
      * @param array|\ArrayAccess $data
      */
-    public function testSet($data)
+    public function testSet($data): void
     {
         Arr::set($data, 'color', 'red');
         $this->assertEquals('red', $data['color']);
@@ -280,13 +273,11 @@ class ArrTest extends TestCase
         $this->assertEquals('second', $data['items']['nested']['list'][1]);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot set 'a/foo', because 'a' is already set and not
-     *                           an array or an object implementing ArrayAccess.
-     */
-    public function testSetNestedInaccessibleObject()
+    public function testSetNestedInaccessibleObject(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot set \'a/foo\', because \'a\' is already set and not an array or an object implementing ArrayAccess.');
+
         $data = [
             'a' => new \EmptyIterator(),
         ];
@@ -314,7 +305,7 @@ class ArrTest extends TestCase
      *
      * @param string $cls
      */
-    public function testSetArraysReturnedByReferenceError($cls)
+    public function testSetArraysReturnedByReferenceError($cls): void
     {
         $data = [
             'a' => new $cls(),
@@ -344,7 +335,7 @@ class ArrTest extends TestCase
      *
      * @param array|\ArrayAccess $data
      */
-    public function testRemove($data)
+    public function testRemove($data): void
     {
         $this->assertSame('remove', Arr::remove($data, 'baz', 'default'));
         $this->assertSame('default', Arr::remove($data, 'baz', 'default'));
@@ -353,7 +344,7 @@ class ArrTest extends TestCase
         $this->assertSame('default', Arr::remove($data, 'items/nested/bye', 'default'));
     }
 
-    public function testIsAccessible()
+    public function testIsAccessible(): void
     {
         $this->assertTrue(Arr::isAccessible([]));
         $this->assertTrue(Arr::isAccessible(new \ArrayObject()));
@@ -380,7 +371,7 @@ class ArrTest extends TestCase
      * @param array $array
      * @param bool  $indexed
      */
-    public function testIsIndexedAndAssociative($array, $indexed)
+    public function testIsIndexedAndAssociative($array, $indexed): void
     {
         $this->assertEquals($indexed, Arr::isIndexed($array));
         $this->assertEquals(!$indexed, Arr::isAssociative($array));
@@ -390,13 +381,19 @@ class ArrTest extends TestCase
         $this->assertEquals(!$indexed, Arr::isAssociative($traversable));
     }
 
-    public function testNonArraysAreNotIndexedOrAssociative()
+    public function testNonArraysAreNotIndexed(): void
     {
-        $this->assertFalse(Arr::isIndexed('derp'));
+        $this->expectException(\TypeError::class);
         $this->assertFalse(Arr::isAssociative('derp'));
     }
 
-    public function testMapRecursive()
+    public function testNonArraysAreNotAssociative(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->assertFalse(Arr::isAssociative('derp'));
+    }
+
+    public function testMapRecursive(): void
     {
         $arr = [
             'foo' => new \ArrayObject([
@@ -485,19 +482,19 @@ class ArrTest extends TestCase
      * @param array $array2
      * @param array $result
      */
-    public function testReplaceRecursive($array1, $array2, $result)
+    public function testReplaceRecursive($array1, $array2, $result): void
     {
         $this->assertEquals($result, Arr::replaceRecursive($array1, $array2));
     }
 
-    public function testFlatten()
+    public function testFlatten(): void
     {
         $result = Arr::flatten([[1, 2], [[3]], 4]);
 
         $this->assertSame([1, 2, [3], 4], $result);
     }
 
-    public function testFlattenDeep()
+    public function testFlattenDeep(): void
     {
         $result = Arr::flatten([[1, 2], [[3]], 4], INF);
 

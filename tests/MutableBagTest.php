@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of a Camelot Project package.
  *
@@ -24,7 +26,7 @@ class MutableBagTest extends BagTest
         return new MutableBag($items);
     }
 
-    public function testRemovePath()
+    public function testRemovePath(): void
     {
         $bag = $this->createBag(
             [

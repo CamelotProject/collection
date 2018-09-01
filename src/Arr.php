@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of a Camelot Project package.
  *
@@ -13,9 +15,7 @@ namespace Camelot\Collection;
 
 use ArrayAccess;
 use Camelot\Common\Assert;
-use Camelot\Common\Deprecated;
 use Camelot\Common\Thrower;
-use InvalidArgumentException;
 use RuntimeException;
 use Traversable;
 
@@ -37,9 +37,9 @@ class Arr
      *
      * @param iterable|null|\stdClass $iterable
      *
-     * @return array
+     * @throws \InvalidArgumentException
      */
-    public static function from($iterable)
+    public static function from($iterable): array
     {
         if (\is_array($iterable)) {
             return $iterable;
@@ -65,10 +65,8 @@ class Arr
      * Recursively converts an `iterable` to nested arrays.
      *
      * @param iterable|null|\stdClass $iterable
-     *
-     * @return array
      */
-    public static function fromRecursive($iterable)
+    public static function fromRecursive($iterable): array
     {
         $arr = static::from($iterable);
 
@@ -110,10 +108,8 @@ class Arr
      * @param iterable        $input     A list of arrays or objects from which to pull a column of values
      * @param string|int|null $columnKey The key of the values to return or `null` for no change
      * @param string|int|null $indexKey  The key of the keys to return or `null` for no change
-     *
-     * @return array
      */
-    public static function column($input, $columnKey, $indexKey = null)
+    public static function column(iterable $input, $columnKey, $indexKey = null): array
     {
         Assert::isIterable($input);
 
@@ -183,13 +179,10 @@ class Arr
      *
      * @param array|ArrayAccess $data Data to check values from
      * @param string            $path Path to traverse and check keys from
-     *
-     * @return bool
      */
-    public static function has($data, $path)
+    public static function has($data, string $path): bool
     {
         Assert::isArrayAccessible($data);
-        Assert::stringNotEmpty($path);
 
         $path = explode('/', $path);
 
@@ -226,10 +219,9 @@ class Arr
      *
      * @return mixed|null
      */
-    public static function get($data, $path, $default = null)
+    public static function get($data, string $path, $default = null)
     {
         Assert::isArrayAccessible($data);
-        Assert::stringNotEmpty($path);
 
         $path = explode('/', $path);
 
@@ -280,10 +272,9 @@ class Arr
      * @throws \RuntimeException when trying to set a value in an array that is in an `ArrayAccess` object
      *                           which cannot retrieve arrays by reference
      */
-    public static function set(&$data, $path, $value)
+    public static function set(&$data, string $path, $value): void
     {
         Assert::isArrayAccessible($data);
-        Assert::stringNotEmpty($path);
 
         $queue = explode('/', $path);
         // Optimization for simple sets.
@@ -379,10 +370,8 @@ class Arr
      * @throws \RuntimeException when trying to remove a path that travels through a scalar value
      * @throws \RuntimeException when trying to remove a value in an array that is in an `ArrayAccess` object
      *                           which cannot retrieve arrays by reference
-     *
-     * @return mixed
      */
-    public static function remove(&$data, $path, $default = null)
+    public static function remove(&$data, string $path, $default = null)
     {
         if (!static::$unsetMarker) {
             static::$unsetMarker = new \stdClass();
@@ -408,12 +397,8 @@ class Arr
 
     /**
      * Returns whether the value is an array or an object implementing `ArrayAccess`.
-     *
-     * @param mixed $value
-     *
-     * @return bool
      */
-    public static function isAccessible($value)
+    public static function isAccessible($value): bool
     {
         return $value instanceof ArrayAccess || \is_array($value);
     }
@@ -422,12 +407,8 @@ class Arr
      * Returns whether the `$iterable` is an associative mapping.
      *
      * Note: Empty arrays are not.
-     *
-     * @param iterable $iterable
-     *
-     * @return bool
      */
-    public static function isAssociative($iterable)
+    public static function isAssociative(iterable $iterable): bool
     {
         if ($iterable instanceof Traversable) {
             $iterable = iterator_to_array($iterable);
@@ -443,12 +424,8 @@ class Arr
      * Returns whether the `$iterable` is an indexed list - zero indexed and sequential.
      *
      * Note: Empty iterables are.
-     *
-     * @param iterable $iterable
-     *
-     * @return bool
      */
-    public static function isIndexed($iterable)
+    public static function isIndexed(iterable $iterable): bool
     {
         if (!\is_iterable($iterable)) {
             return false;
@@ -462,12 +439,9 @@ class Arr
      *
      * This converts all `Traversable` objects to arrays.
      *
-     * @param iterable $iterable
      * @param callable $callable Function is passed `($value, $key)`
-     *
-     * @return array
      */
-    public static function mapRecursive($iterable, callable $callable)
+    public static function mapRecursive(iterable $iterable, callable $callable): array
     {
         Assert::isIterable($iterable);
 
@@ -486,7 +460,6 @@ class Arr
      * Internal method do actual recursion after args have been validated by main method.
      *
      * @param iterable $iterable
-     * @param callable $callable
      *
      * @return array
      */
@@ -557,7 +530,6 @@ class Arr
     /**
      * Determine whether the ArrayAccess object can return by reference.
      *
-     * @param ArrayAccess      $obj
      * @param string           $key   The key to try with
      * @param ArrayAccess|null $value The value if it needed to be fetched
      * @param \ErrorException  $ex

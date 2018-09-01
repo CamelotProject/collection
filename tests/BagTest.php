@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of a Camelot Project package.
  *
@@ -28,7 +30,7 @@ class BagTest extends TestCase
 
     // region Creation / Unwrapping Methods
 
-    public function testOf()
+    public function testOf(): void
     {
         /** @var Bag $cls */
         $cls = $this->cls;
@@ -51,17 +53,16 @@ class BagTest extends TestCase
     /**
      * @dataProvider provideFromAndToArray
      *
-     * @param mixed $input
      * @param array $output
      */
-    public function testFromAndToArray($input, $output = ['foo' => 'bar'])
+    public function testFromAndToArray($input, $output = ['foo' => 'bar']): void
     {
         $cls = $this->cls;
         $actual = $cls::from($input)->toArray();
         $this->assertSame($output, $actual);
     }
 
-    public function testFromRecursive()
+    public function testFromRecursive(): void
     {
         $a = [
             'foo'       => 'bar',
@@ -88,7 +89,7 @@ class BagTest extends TestCase
         $this->assertEquals(['why use' => 'these'], $stdClass->toArray());
     }
 
-    public function testToArrayRecursive()
+    public function testToArrayRecursive(): void
     {
         $bag = $this->createBag([
             'foo'    => 'bar',
@@ -106,7 +107,7 @@ class BagTest extends TestCase
         $this->assertEquals($expected, $arr);
     }
 
-    public function testCombine()
+    public function testCombine(): void
     {
         $cls = $this->cls;
         $actual = $cls::combine(['red', 'green'], ['bad', 'good'])->toArray();
@@ -118,7 +119,7 @@ class BagTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testCombineEmpty()
+    public function testCombineEmpty(): void
     {
         $cls = $this->cls;
         $actual = $cls::combine([], [])->toArray();
@@ -126,11 +127,10 @@ class BagTest extends TestCase
         $this->assertEquals([], $actual);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testCombineDifferentSizes()
+    public function testCombineDifferentSizes(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $cls = $this->cls;
         $cls::combine(['derp'], ['wait', 'wut']);
     }
@@ -139,7 +139,7 @@ class BagTest extends TestCase
 
     // region Methods returning a single value
 
-    public function testHas()
+    public function testHas(): void
     {
         $bag = $this->createBag(['foo' => 'bar', 'null' => null]);
 
@@ -149,7 +149,7 @@ class BagTest extends TestCase
         $this->assertFalse($bag->has('derp'));
     }
 
-    public function testHasPath()
+    public function testHasPath(): void
     {
         $bag = $this->createBag([
             'items' => new ArrayObject([
@@ -163,7 +163,7 @@ class BagTest extends TestCase
         $this->assertFalse($bag->hasPath('derp'));
     }
 
-    public function testHasItem()
+    public function testHasItem(): void
     {
         $foo = new ArrayObject();
         $bag = $this->createBag([
@@ -177,7 +177,7 @@ class BagTest extends TestCase
         $this->assertFalse($bag->hasItem('derp'));
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $bag = $this->createBag([
             'foo'  => 'bar',
@@ -189,7 +189,7 @@ class BagTest extends TestCase
         $this->assertEquals('default', $bag->get('derp', 'default'));
     }
 
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $bag = $this->createBag([
             'items' => new ArrayObject([
@@ -203,14 +203,14 @@ class BagTest extends TestCase
         $this->assertEquals('default', $bag->getPath('derp/derp', 'default'));
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $bag = $this->createBag(['foo', 'bar']);
 
-        $this->assertEquals(2, \count($bag));
+        $this->assertCount(2, $bag);
     }
 
-    public function testEmpty()
+    public function testEmpty(): void
     {
         $bag = $this->createBag(['foo', 'bar']);
         $this->assertFalse($bag->isEmpty());
@@ -219,7 +219,7 @@ class BagTest extends TestCase
         $this->assertTrue($empty->isEmpty());
     }
 
-    public function testFirst()
+    public function testFirst(): void
     {
         $bag = $this->createBag(['first', 'second']);
         $this->assertEquals('first', $bag->first());
@@ -228,7 +228,7 @@ class BagTest extends TestCase
         $this->assertNull($empty->first());
     }
 
-    public function testLast()
+    public function testLast(): void
     {
         $bag = $this->createBag(['first', 'second']);
         $this->assertEquals('second', $bag->last());
@@ -237,7 +237,7 @@ class BagTest extends TestCase
         $this->assertNull($empty->last());
     }
 
-    public function testJoin()
+    public function testJoin(): void
     {
         $bag = $this->createBag(['first', 'second', 'third']);
         $this->assertEquals('first, second, third', $bag->join(', '));
@@ -246,7 +246,7 @@ class BagTest extends TestCase
         $this->assertEquals('', $empty->join(', '));
     }
 
-    public function testSum()
+    public function testSum(): void
     {
         $bag = $this->createBag([3, 4]);
         $this->assertEquals(7, $bag->sum());
@@ -258,7 +258,7 @@ class BagTest extends TestCase
         $this->assertEquals(0, $dumb->sum());
     }
 
-    public function testProduct()
+    public function testProduct(): void
     {
         $bag = $this->createBag([3, 4]);
         $this->assertEquals(12, $bag->product());
@@ -276,7 +276,7 @@ class BagTest extends TestCase
      * @param array $data
      * @param bool  $isIndexed
      */
-    public function testIsAssociativeAndIndexed($data, $isIndexed)
+    public function testIsAssociativeAndIndexed($data, $isIndexed): void
     {
         $bag = $this->createBag($data);
 
@@ -326,7 +326,7 @@ class BagTest extends TestCase
      * @param $fromIndex
      * @param $items
      */
-    public function testIndexOf($expectedIndex, $item, $fromIndex = 0, $items = null)
+    public function testIndexOf($expectedIndex, $item, $fromIndex = 0, $items = null): void
     {
         $bag = $this->createBag($items !== null ? $items : ['a', 'b', 'c', 'a', 'b', 'c']);
 
@@ -375,16 +375,16 @@ class BagTest extends TestCase
      * @param $fromIndex
      * @param $items
      */
-    public function testLastIndexOf($expectedIndex, $item, $fromIndex = null, $items = null)
+    public function testLastIndexOf($expectedIndex, $item, $fromIndex = null, $items = null): void
     {
         $bag = $this->createBag($items !== null ? $items : ['a', 'b', 'c', 'a', 'b', 'c']);
 
         $this->assertSame($expectedIndex, $bag->lastIndexOf($item, $fromIndex));
     }
 
-    public function testFind()
+    public function testFind(): void
     {
-        list($bag, $matchBs, $b1, $b2) = $this->findSetup();
+        [$bag, $matchBs, $b1, $b2] = $this->findSetup();
 
         $this->assertSame($b1, $bag->find($matchBs));
         $this->assertSame($b2, $bag->find($matchBs, 3));
@@ -392,9 +392,9 @@ class BagTest extends TestCase
         $this->assertNull($bag->find($matchBs, 5));
     }
 
-    public function testFindLast()
+    public function testFindLast(): void
     {
-        list($bag, $matchBs, $b1, $b2) = $this->findSetup();
+        [$bag, $matchBs, $b1, $b2] = $this->findSetup();
 
         $this->assertSame($b2, $bag->findLast($matchBs));
         $this->assertSame($b1, $bag->findLast($matchBs, 3));
@@ -402,9 +402,9 @@ class BagTest extends TestCase
         $this->assertNull($bag->findLast($matchBs, 0));
     }
 
-    public function testFindKey()
+    public function testFindKey(): void
     {
-        list($bag, $matchBs) = $this->findSetup();
+        [$bag, $matchBs] = $this->findSetup();
 
         $this->assertSame(1, $bag->findKey($matchBs));
         $this->assertSame(4, $bag->findKey($matchBs, 3));
@@ -412,9 +412,9 @@ class BagTest extends TestCase
         $this->assertNull($bag->findKey($matchBs, 5));
     }
 
-    public function testFindLastKey()
+    public function testFindLastKey(): void
     {
-        list($bag, $matchBs) = $this->findSetup();
+        [$bag, $matchBs] = $this->findSetup();
 
         $this->assertSame(4, $bag->findLastKey($matchBs));
         $this->assertSame(1, $bag->findLastKey($matchBs, 3));
@@ -440,35 +440,33 @@ class BagTest extends TestCase
         return [$bag, $matchBs, $b1, $b2];
     }
 
-    public function testRandomValue()
+    public function testRandomValue(): void
     {
         $bag = $this->createBag(['red']);
 
         $this->assertSame('red', $bag->randomValue());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testRandomValueEmpty()
+    public function testRandomValueEmpty(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $bag = $this->createBag([]);
 
         $bag->randomValue();
     }
 
-    public function testRandomKey()
+    public function testRandomKey(): void
     {
         $bag = $this->createBag(['red']);
 
         $this->assertSame(0, $bag->randomKey());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testRandomKeyEmpty()
+    public function testRandomKeyEmpty(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $bag = $this->createBag([]);
 
         $bag->randomKey();
@@ -478,7 +476,7 @@ class BagTest extends TestCase
 
     // region Methods returning a new bag
 
-    public function testCall()
+    public function testCall(): void
     {
         $bag = $this->createBag(['red', 'blue']);
 
@@ -495,7 +493,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['red', 'blue', 'green', 'black'], $bag, $result);
     }
 
-    public function testMutable()
+    public function testMutable(): void
     {
         $bag = $this->createBag(['foo' => 'bar']);
 
@@ -506,7 +504,7 @@ class BagTest extends TestCase
         $this->assertEquals(['foo' => 'bar'], $mutable->toArray());
     }
 
-    public function testImmutable()
+    public function testImmutable(): void
     {
         $bag = $this->createBag(['foo', 'bar']);
 
@@ -517,7 +515,7 @@ class BagTest extends TestCase
         $this->assertEquals(['foo', 'bar'], $immutable->toArray());
     }
 
-    public function testKeys()
+    public function testKeys(): void
     {
         $bag = $this->createBag(['foo' => 'bar', 'hello' => 'world']);
 
@@ -526,7 +524,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo', 'hello'], $bag, $keys);
     }
 
-    public function testValues()
+    public function testValues(): void
     {
         $bag = $this->createBag(['foo' => 'bar', 'hello' => 'world']);
 
@@ -535,7 +533,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['bar', 'world'], $bag, $values);
     }
 
-    public function testMap()
+    public function testMap(): void
     {
         $bag = $this->createBag(['foo' => 'bar', 'hello' => 'world']);
 
@@ -546,7 +544,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo' => 'foo.bar', 'hello' => 'hello.world'], $bag, $actual);
     }
 
-    public function testMapKeys()
+    public function testMapKeys(): void
     {
         $bag = $this->createBag(['foo' => 'bar', 'hello' => 'world']);
 
@@ -557,7 +555,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo.bar' => 'bar', 'hello.world' => 'world'], $bag, $actual);
     }
 
-    public function testFilter()
+    public function testFilter(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'hello', 'world']);
 
@@ -568,7 +566,7 @@ class BagTest extends TestCase
         $this->assertBagResult([0 => 'foo', 3 => 'world'], $bag, $actual);
     }
 
-    public function testReject()
+    public function testReject(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'hello', 'world']);
 
@@ -579,7 +577,7 @@ class BagTest extends TestCase
         $this->assertBagResult([1 => 'bar', 2 => 'hello'], $bag, $actual);
     }
 
-    public function testClean()
+    public function testClean(): void
     {
         $bag = $this->createBag([null, '', 'foo', false, 0, true, [], ['bar']]);
 
@@ -588,7 +586,7 @@ class BagTest extends TestCase
         $this->assertBagResult([2 => 'foo', 5 => true, 7 => ['bar']], $bag, $actual);
     }
 
-    public function testReplace()
+    public function testReplace(): void
     {
         $bag = $this->createBag(['foo' => 'bar']);
 
@@ -604,7 +602,7 @@ class BagTest extends TestCase
      * @param array $array2
      * @param array $expected
      */
-    public function testReplaceRecursive($array1, $array2, $expected)
+    public function testReplaceRecursive($array1, $array2, $expected): void
     {
         $cls = $this->cls;
         $bag = $cls::from($array1);
@@ -614,7 +612,7 @@ class BagTest extends TestCase
         $this->assertBagResult($expected, $bag, $actual);
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         $bag = $this->createBag(['foo' => 'bar']);
 
@@ -630,7 +628,7 @@ class BagTest extends TestCase
      * @param array $array2
      * @param array $expected
      */
-    public function testDefaultsRecursive($array1, $array2, $expected)
+    public function testDefaultsRecursive($array1, $array2, $expected): void
     {
         $cls = $this->cls;
         $bag = $cls::from($array2);
@@ -640,7 +638,7 @@ class BagTest extends TestCase
         $this->assertBagResult($expected, $bag, $actual);
     }
 
-    public function testMerge()
+    public function testMerge(): void
     {
         $bag = $this->createBag(['foo', 'bar']);
 
@@ -670,7 +668,7 @@ class BagTest extends TestCase
      * @param bool     $preserveKeys
      * @param array    $expected
      */
-    public function testSlice($offset, $length, $preserveKeys, $expected)
+    public function testSlice($offset, $length, $preserveKeys, $expected): void
     {
         $bag = $this->createBag(['foo', 'bar', 'hello', 'world']);
 
@@ -679,7 +677,7 @@ class BagTest extends TestCase
         $this->assertBagResult($expected, $bag, $actual);
     }
 
-    public function testPartition()
+    public function testPartition(): void
     {
         $bag = $this->createBag(['foo' => 'bar', 'hello' => 'world']);
 
@@ -690,12 +688,12 @@ class BagTest extends TestCase
         $this->assertInternalType('array', $actual);
         $this->assertCount(2, $actual);
 
-        list($trueBag, $falseBag) = $actual;
+        [$trueBag, $falseBag] = $actual;
         $this->assertBagResult(['foo' => 'bar'], $bag, $trueBag);
         $this->assertBagResult(['hello' => 'world'], $bag, $falseBag);
     }
 
-    public function testColumn()
+    public function testColumn(): void
     {
         $bag = $this->createBag([
             ['id' => 'foo', 'value' => 'bar'],
@@ -709,7 +707,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo' => 'bar', 'hello' => 'world'], $bag, $actual);
     }
 
-    public function testFlip()
+    public function testFlip(): void
     {
         $bag = $this->createBag(['foo' => 'bar', 'hello' => 'world', 'second' => 'world']);
 
@@ -718,7 +716,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['bar' => 'foo', 'world' => 'second'], $bag, $actual);
     }
 
-    public function testFlipEmpty()
+    public function testFlipEmpty(): void
     {
         $bag = $this->createBag([]);
 
@@ -727,15 +725,14 @@ class BagTest extends TestCase
         $this->assertBagResult([], $bag, $actual);
     }
 
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFlipObjects()
+    public function testFlipObjects(): void
     {
+        $this->expectException(\LogicException::class);
+
         $this->createBag([new \stdClass()])->flip();
     }
 
-    public function testReduce()
+    public function testReduce(): void
     {
         $bag = $this->createBag([1, 2, 3, 4]);
 
@@ -749,7 +746,7 @@ class BagTest extends TestCase
         $this->assertEquals(24, $product);
     }
 
-    public function testUnique()
+    public function testUnique(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'foo', 3, '3', '3a', '3']);
         $actual = $bag->unique();
@@ -762,7 +759,7 @@ class BagTest extends TestCase
         $this->assertBagResult([$first, $second], $bag, $actual);
     }
 
-    public function testChunk()
+    public function testChunk(): void
     {
         $bag = $this->createBag(['a', 'b', 'c', 'd', 'e']);
 
@@ -777,7 +774,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['e'], $bag, $chunked->get(2));
     }
 
-    public function testChunkPreserveKeys()
+    public function testChunkPreserveKeys(): void
     {
         $bag = $this->createBag(['a', 'b', 'c', 'd', 'e']);
 
@@ -792,7 +789,7 @@ class BagTest extends TestCase
         $this->assertBagResult([4 => 'e'], $bag, $chunked->get(2));
     }
 
-    public function testPadRight()
+    public function testPadRight(): void
     {
         $bag = $this->createBag([1, 2]);
 
@@ -801,7 +798,7 @@ class BagTest extends TestCase
         $this->assertBagResult([1, 2, null, null], $bag, $padded);
     }
 
-    public function testPadLeft()
+    public function testPadLeft(): void
     {
         $bag = $this->createBag([1, 2]);
 
@@ -810,7 +807,7 @@ class BagTest extends TestCase
         $this->assertBagResult([null, null, 1, 2], $bag, $padded);
     }
 
-    public function testPadNone()
+    public function testPadNone(): void
     {
         $bag = $this->createBag([1, 2]);
 
@@ -819,7 +816,7 @@ class BagTest extends TestCase
         $this->assertBagResult([1, 2], $bag, $padded);
     }
 
-    public function testCountValues()
+    public function testCountValues(): void
     {
         $bag = $this->createBag(
             [
@@ -833,7 +830,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['red' => 2, 'blue' => 1], $bag, $actual);
     }
 
-    public function testFlatten()
+    public function testFlatten(): void
     {
         $bag = $this->createBag([[1, 2], [[3]], 4]);
 
@@ -846,7 +843,7 @@ class BagTest extends TestCase
 
     // region Comparison Methods
 
-    public function testPick()
+    public function testPick(): void
     {
         $bag = $this->createBag(['a' => 'red', 'b' => 'blue', 'c' => 'green']);
 
@@ -860,7 +857,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['a' => 'red', 'c' => 'green'], $bag, $actual);
     }
 
-    public function testOmit()
+    public function testOmit(): void
     {
         $bag = $this->createBag(['a' => 'red', 'b' => 'blue', 'c' => 'green']);
 
@@ -874,7 +871,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['b' => 'blue'], $bag, $actual);
     }
 
-    public function testDiff()
+    public function testDiff(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'baz']);
 
@@ -883,7 +880,7 @@ class BagTest extends TestCase
         $this->assertBagResult([0 => 'foo', 2 => 'baz'], $bag, $actual);
     }
 
-    public function testDiffComparator()
+    public function testDiffComparator(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'baz']);
 
@@ -892,7 +889,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo'], $bag, $actual);
     }
 
-    public function testDiffBy()
+    public function testDiffBy(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'baz']);
 
@@ -901,7 +898,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo'], $bag, $actual);
     }
 
-    public function testDiffKeys()
+    public function testDiffKeys(): void
     {
         $bag = $this->createBag(['foo' => 'red', 'bar' => 'blue', 'baz' => 'green']);
 
@@ -910,7 +907,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo' => 'red', 'baz' => 'green'], $bag, $actual);
     }
 
-    public function testDiffKeysComparator()
+    public function testDiffKeysComparator(): void
     {
         $bag = $this->createBag(['foo' => 'red', 'bar' => 'blue', 'baz' => 'green']);
 
@@ -919,7 +916,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo' => 'red'], $bag, $actual);
     }
 
-    public function testDiffKeysBy()
+    public function testDiffKeysBy(): void
     {
         $bag = $this->createBag(['foo' => 'red', 'bar' => 'blue', 'baz' => 'green']);
 
@@ -928,7 +925,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['foo' => 'red'], $bag, $actual);
     }
 
-    public function testIntersect()
+    public function testIntersect(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'baz']);
 
@@ -937,7 +934,7 @@ class BagTest extends TestCase
         $this->assertBagResult([1 => 'bar'], $bag, $actual);
     }
 
-    public function testIntersectComparator()
+    public function testIntersectComparator(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'baz']);
 
@@ -946,7 +943,7 @@ class BagTest extends TestCase
         $this->assertBagResult([1 => 'bar', 2 => 'baz'], $bag, $actual);
     }
 
-    public function testIntersectBy()
+    public function testIntersectBy(): void
     {
         $bag = $this->createBag(['foo', 'bar', 'baz']);
 
@@ -955,7 +952,7 @@ class BagTest extends TestCase
         $this->assertBagResult([1 => 'bar', 2 => 'baz'], $bag, $actual);
     }
 
-    public function testIntersectKeys()
+    public function testIntersectKeys(): void
     {
         $bag = $this->createBag(['foo' => 'red', 'bar' => 'blue', 'baz' => 'green']);
 
@@ -964,7 +961,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['bar' => 'blue'], $bag, $actual);
     }
 
-    public function testIntersectKeysComparator()
+    public function testIntersectKeysComparator(): void
     {
         $bag = $this->createBag(['foo' => 'red', 'bar' => 'blue', 'baz' => 'green']);
 
@@ -973,7 +970,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['bar' => 'blue'], $bag, $actual);
     }
 
-    public function testIntersectKeysBy()
+    public function testIntersectKeysBy(): void
     {
         $bag = $this->createBag(['foo' => 'red', 'bar' => 'blue', 'baz' => 'green']);
 
@@ -1016,7 +1013,7 @@ class BagTest extends TestCase
 
     // region Sorting Methods
 
-    public function testSortValuesAsc()
+    public function testSortValuesAsc(): void
     {
         $bag = $this->createBag([4, 'hi' => 3, 1, 2]);
 
@@ -1025,7 +1022,7 @@ class BagTest extends TestCase
         $this->assertBagResult([1, 2, 3, 4], $bag, $sorted);
     }
 
-    public function testSortValuesAscNaturalIgnoreCase()
+    public function testSortValuesAscNaturalIgnoreCase(): void
     {
         $bag = $this->createBag(
             [
@@ -1047,7 +1044,7 @@ class BagTest extends TestCase
         $this->assertBagResult($expected, $bag, $sorted);
     }
 
-    public function testSortValuesAscPreserveKeys()
+    public function testSortValuesAscPreserveKeys(): void
     {
         $bag = $this->createBag(['a' => 4, 'b' => 3, 'c' => 1, 'd' => 2]);
 
@@ -1056,7 +1053,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['c' => 1, 'd' => 2, 'b' => 3, 'a' => 4], $bag, $sorted);
     }
 
-    public function testSortValuesDesc()
+    public function testSortValuesDesc(): void
     {
         $bag = $this->createBag([4, 'hi' => 3, 1, 2]);
 
@@ -1065,7 +1062,7 @@ class BagTest extends TestCase
         $this->assertBagResult([4, 3, 2, 1], $bag, $sorted);
     }
 
-    public function testSortValuesDescPreserveKeys()
+    public function testSortValuesDescPreserveKeys(): void
     {
         $bag = $this->createBag(['a' => 4, 'b' => 3, 'c' => 1, 'd' => 2]);
 
@@ -1074,7 +1071,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['a' => 4, 'b' => 3, 'd' => 2, 'c' => 1], $bag, $sorted);
     }
 
-    public function testSortValuesWithComparator()
+    public function testSortValuesWithComparator(): void
     {
         $bag = $this->createBag(['blue', 'red', 'black']);
 
@@ -1094,7 +1091,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['blue', 'black', 'red'], $bag, $sorted);
     }
 
-    public function testSortValuesWithComparatorPreserveKeys()
+    public function testSortValuesWithComparatorPreserveKeys(): void
     {
         $bag = $this->createBag(['blue', 'red', 'black']);
 
@@ -1115,7 +1112,7 @@ class BagTest extends TestCase
         $this->assertBagResult([0 => 'blue', 2 => 'black', 1 => 'red'], $bag, $sorted);
     }
 
-    public function testSortValuesByAsc()
+    public function testSortValuesByAsc(): void
     {
         $bag = $this->createBag(
             [
@@ -1140,7 +1137,7 @@ class BagTest extends TestCase
         $this->assertBagResult($expected, $bag, $sorted);
     }
 
-    public function testSortValuesByDesc()
+    public function testSortValuesByDesc(): void
     {
         $bag = $this->createBag(
             [
@@ -1166,7 +1163,7 @@ class BagTest extends TestCase
         $this->assertBagResult($expected, $bag, $sorted);
     }
 
-    public function testSortValuesByPreserveKeys()
+    public function testSortValuesByPreserveKeys(): void
     {
         $bag = $this->createBag(['blue', 'red', 'black']);
 
@@ -1187,7 +1184,7 @@ class BagTest extends TestCase
         $this->assertBagResult([0 => 'blue', 2 => 'black', 1 => 'red'], $bag, $sorted);
     }
 
-    public function testSortKeysAsc()
+    public function testSortKeysAsc(): void
     {
         $bag = $this->createBag(['c' => 1, 'd' => 2, 'b' => 3, 'a' => 4]);
 
@@ -1196,7 +1193,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['a' => 4, 'b' => 3, 'c' => 1, 'd' => 2], $bag, $sorted);
     }
 
-    public function testSortKeysDesc()
+    public function testSortKeysDesc(): void
     {
         $bag = $this->createBag(['c' => 1, 'd' => 2, 'b' => 3, 'a' => 4]);
 
@@ -1205,7 +1202,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['d' => 2, 'c' => 1, 'b' => 3, 'a' => 4], $bag, $sorted);
     }
 
-    public function testSortKeysWithComparator()
+    public function testSortKeysWithComparator(): void
     {
         $bag = $this->createBag(['blue' => 'a', 'red' => 'b', 'black' => 'c']);
 
@@ -1225,7 +1222,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['blue' => 'a', 'black' => 'c', 'red' => 'b'], $bag, $sorted);
     }
 
-    public function testSortKeysByAsc()
+    public function testSortKeysByAsc(): void
     {
         $bag = $this->createBag(['blue' => 'a', 'red' => 'b', 'black' => 'c']);
 
@@ -1238,7 +1235,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['blue' => 'a', 'black' => 'c', 'red' => 'b'], $bag, $sorted);
     }
 
-    public function testSortKeysByDesc()
+    public function testSortKeysByDesc(): void
     {
         $bag = $this->createBag(['blue' => 'a', 'red' => 'b', 'black' => 'c']);
 
@@ -1252,7 +1249,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['red' => 'b', 'blue' => 'a', 'black' => 'c'], $bag, $sorted);
     }
 
-    public function testReverse()
+    public function testReverse(): void
     {
         $bag = $this->createBag(['a', 'b', 'c', 'd']);
 
@@ -1261,7 +1258,7 @@ class BagTest extends TestCase
         $this->assertBagResult(['d', 'c', 'b', 'a'], $bag, $actual);
     }
 
-    public function testReversePreserveKeys()
+    public function testReversePreserveKeys(): void
     {
         $bag = $this->createBag(['a', 'b', 'c', 'd']);
 
@@ -1270,7 +1267,7 @@ class BagTest extends TestCase
         $this->assertBagResult([3 => 'd', 2 => 'c', 1 => 'b', 0 => 'a'], $bag, $actual);
     }
 
-    public function testShuffle()
+    public function testShuffle(): void
     {
         $bag = $this->createBag(['a', 'b', 'c', 'd']);
 
@@ -1298,21 +1295,21 @@ class BagTest extends TestCase
 
     // region Internal Methods
 
-    public function testIterator()
+    public function testIterator(): void
     {
         $bag = $this->createBag(['a', 'b', 'c', 'd']);
 
         $this->assertEquals(['a', 'b', 'c', 'd'], iterator_to_array($bag));
     }
 
-    public function testJsonSerializable()
+    public function testJsonSerializable(): void
     {
         $bag = $this->createBag(['a', 'b', 'c']);
 
         $this->assertEquals('["a","b","c"]', json_encode($bag));
     }
 
-    public function testOffsetExists()
+    public function testOffsetExists(): void
     {
         $arr = ['foo' => 'bar', 'null' => null];
         $bag = $this->createBag($arr);
@@ -1324,7 +1321,7 @@ class BagTest extends TestCase
         $this->assertFalse(isset($arr['null'])); // just why PHP, why!
     }
 
-    public function testOffsetGet()
+    public function testOffsetGet(): void
     {
         $bag = $this->createBag(['foo' => 'bar']);
 
@@ -1332,7 +1329,7 @@ class BagTest extends TestCase
         $this->assertNull($bag['nope']);
     }
 
-    public function after20testOffsetGetByReference()
+    public function after20testOffsetGetByReference(): void
     {
         if (\defined('HHVM_VERSION')) {
             $this->markTestSkipped('HHVM does not trigger indirect modification notice.');
@@ -1343,7 +1340,7 @@ class BagTest extends TestCase
 
         // Assert arrays are not able to be modified by reference.
         $errors = new \ArrayObject();
-        set_error_handler(function ($type, $message) use ($errors) {
+        set_error_handler(function ($type, $message) use ($errors): void {
             $errors[] = [$type, $message];
         });
 
@@ -1354,29 +1351,27 @@ class BagTest extends TestCase
         $this->assertEquals([[E_NOTICE, 'Indirect modification of overloaded element of Camelot\Collection\Bag has no effect']], $errors->getArrayCopy());
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot modify items on an Camelot\Collection\Bag
-     */
-    public function after20testOffsetSet()
+    public function after20testOffsetSet(): void
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot modify items on an Camelot\\Collection\\Bag');
+
         $bag = $this->createBag();
 
         $bag['foo'] = 'bar';
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot remove items from an Camelot\Collection\Bag
-     */
-    public function after20testOffsetUnset()
+    public function after20testOffsetUnset(): void
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot remove items from an Camelot\\Collection\\Bag');
+
         $bag = $this->createBag(['foo' => 'bar']);
 
         unset($bag['foo']);
     }
 
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $bag = $this->createBag(['foo' => 'bar']);
 
@@ -1393,7 +1388,7 @@ class BagTest extends TestCase
      * @param Bag   $initialBag
      * @param Bag   $actualBag
      */
-    protected function assertBagResult($expected, $initialBag, $actualBag)
+    protected function assertBagResult($expected, $initialBag, $actualBag): void
     {
         $this->assertInstanceOf($this->cls, $actualBag);
         $this->assertNotSame($initialBag, $actualBag);
