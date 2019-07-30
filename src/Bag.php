@@ -29,6 +29,7 @@ use function array_slice;
 use function count;
 use function func_get_args;
 use function in_array;
+use function is_array;
 use function is_iterable;
 
 /**
@@ -195,6 +196,113 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
     public function get($key, $default = null)
     {
         return (isset($this->items[$key]) || array_key_exists($key, $this->items)) ? $this->items[$key] : $default;
+    }
+
+    /**
+     * Returns the alphabetic characters of the parameter value.
+     *
+     * @copyright Fabien Potencier <fabien@symfony.com>
+     *
+     * @param string $key     The parameter key
+     * @param string $default The default value if the parameter key does not exist
+     *
+     * @return string The filtered value
+     */
+    public function getAlpha($key, $default = ''): string
+    {
+        return preg_replace('/[^[:alpha:]]/', '', $this->get($key, $default));
+    }
+
+    /**
+     * Returns the alphabetic characters and digits of the parameter value.
+     *
+     * @copyright Fabien Potencier <fabien@symfony.com>
+     *
+     * @param string $key     The parameter key
+     * @param string $default The default value if the parameter key does not exist
+     *
+     * @return string The filtered value
+     */
+    public function getAlnum($key, $default = ''): string
+    {
+        return preg_replace('/[^[:alnum:]]/', '', $this->get($key, $default));
+    }
+
+    /**
+     * Returns the digits of the parameter value.
+     *
+     * @copyright Fabien Potencier <fabien@symfony.com>
+     *
+     * @param string $key     The parameter key
+     * @param string $default The default value if the parameter key does not exist
+     *
+     * @return string The filtered value
+     */
+    public function getDigits($key, $default = ''): string
+    {
+        // we need to remove - and + because they're allowed in the filter
+        return str_replace(['-', '+'], '', $this->filterValue($key, $default, FILTER_SANITIZE_NUMBER_INT));
+    }
+
+    /**
+     * Returns the parameter value converted to integer.
+     *
+     * @copyright Fabien Potencier <fabien@symfony.com>
+     *
+     * @param string $key     The parameter key
+     * @param int    $default The default value if the parameter key does not exist
+     *
+     * @return int The filtered value
+     */
+    public function getInt($key, $default = 0): int
+    {
+        return (int) $this->get($key, $default);
+    }
+
+    /**
+     * Returns the parameter value converted to boolean.
+     *
+     * @copyright Fabien Potencier <fabien@symfony.com>
+     *
+     * @param string $key     The parameter key
+     * @param bool   $default The default value if the parameter key does not exist
+     *
+     * @return bool The filtered value
+     */
+    public function getBoolean($key, $default = false): bool
+    {
+        return $this->filterValue($key, $default, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Filter key.
+     *
+     * @copyright Fabien Potencier <fabien@symfony.com>
+     *
+     * @param string $key     Key
+     * @param mixed  $default Default = null
+     * @param int    $filter  FILTER_* constant
+     * @param mixed  $options Filter options
+     *
+     * @see http://php.net/manual/en/function.filter-var.php
+     *
+     * @return mixed
+     */
+    public function filterValue($key, $default = null, $filter = FILTER_DEFAULT, $options = [])
+    {
+        $value = $this->get($key, $default);
+
+        // Always turn $options into an array - this allows filter_var option shortcuts.
+        if (!is_array($options) && $options) {
+            $options = ['flags' => $options];
+        }
+
+        // Add a convenience check for arrays.
+        if (is_array($value) && !isset($options['flags'])) {
+            $options['flags'] = FILTER_REQUIRE_ARRAY;
+        }
+
+        return filter_var($value, $filter, $options);
     }
 
     /**
