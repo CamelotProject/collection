@@ -685,7 +685,7 @@ class BagTest extends TestCase
             return strpos($item, 'a') !== false;
         });
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertCount(2, $actual);
 
         [$trueBag, $falseBag] = $actual;

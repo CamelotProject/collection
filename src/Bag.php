@@ -16,7 +16,7 @@ namespace Camelot\Collection;
 use ArrayAccess;
 use Camelot\Common\Assert;
 use Camelot\Common\Deprecated;
-use Camelot\Common\Thrower;
+use Camelot\Thrower\Thrower;
 use Countable;
 use ErrorException;
 use InvalidArgumentException;
@@ -1776,7 +1776,7 @@ class Bag implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
      *
      * @internal
      */
-    public function __debugInfo(): iterable
+    public function __debugInfo(): ?array
     {
         return $this->items;
     }
